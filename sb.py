@@ -88,15 +88,27 @@ class Skyblock():
     news['news'] = post
     return news
   
-  def get_player_profiles(self, uuid):
-    profiles = {}
-    player = self.__call_api('/player?uuid=' + uuid)
-    profile_ids = player['player']['stats']['SkyBlock']['profiles']
-    
-    for k,v in profile_ids.items():
-      profiles[v['cute_name']] = k
+  def get_player_profiles(self, uuid=None, player=None):
+    if uuid is not None:
+        profiles = {}
+        player = self.__call_api('/player?uuid=' + uuid)
+        profile_ids = player['player']['stats']['SkyBlock']['profiles']
 
-    return profiles
+        for k,v in profile_ids.items():
+          profiles[v['cute_name']] = k
+
+        return profiles
+    else:
+        suuid = self.uname_resolver(player)
+        profiles = {}
+        player = self.__call_api('/player?uuid=' + suuid)
+        profile_ids = player['player']['stats']['SkyBlock']['profiles']
+
+        for k,v in profile_ids.items():
+          profiles[v['cute_name']] = k
+
+        return profiles
+
   
   def get_player_auctions(self, uuid, profiles, pn=0, page=1):
     profile = list(profiles.values())[pn]
